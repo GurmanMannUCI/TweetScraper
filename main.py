@@ -15,12 +15,11 @@ def ratelimitcountchecker(count):
         return ratelimit()
     else:
         return True
-
-def Setup():
+    
+def Setup(PersonID):
     print("Starting Tweet Scraper")
     count = 0
     ratelimitcheck = True
-    PersonID = 704440164
     global maindict
     PersonInfo = {PersonID : {
         "oldmax_id"    : 0,
@@ -29,9 +28,9 @@ def Setup():
     print("Parsing account id:{}".format(PersonID))
     try:
         ParserInfo = Loader.ParserInfoReader()
-        print("Successfully loaded information for account id:{}".format(PersonID))
+        print("Successfully loaded information for account id: {}".format(PersonID))
     except:
-        print("Couldn't load local information for account id:{}".format(PersonID))
+        print("Couldn't load local information for account id: {}".format(PersonID))
         pass
     else:
         if PersonID in ParserInfo.keys():
@@ -89,4 +88,4 @@ def ratelimit():
 
 
 if __name__ == "__main__":
-    Setup()
+    Setup(704440164)
