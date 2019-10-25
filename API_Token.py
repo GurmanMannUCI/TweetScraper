@@ -6,10 +6,10 @@ def get_api(cfg):
   return tweepy.API(auth)
 
 cfg = {
-    "consumer_key"        : "MPnmQEm0ivbtr0pZebox2it3b",
-    "consumer_secret"     : "JE62GeBPUfKqYYs0XmpxrJmcnOL3Os87vJ77I9DhbLCB1PtY7e",
-    "access_token"        : "704440164-OZYM0Pzxc1Yky8BFYHCmWZSUjp9EoGPFdqawlL7k",
-    "access_token_secret" : "MlutZuvbNt4fe1En904hPCAf2MAn66nCm1YUpOb6lMcOa"
+    "consumer_key"        : "Insert Consumer Key here",
+    "consumer_secret"     : "Insert Consumer Secret here",
+    "access_token"        : "Insert Access token here",
+    "access_token_secret" : "Insert Access token secret here"
     }
 
 
