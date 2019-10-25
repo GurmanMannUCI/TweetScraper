@@ -15,11 +15,9 @@ def ratelimitcountchecker(count):
         return ratelimit()
     else:
         return True
-    
+
 def Setup(PersonID):
     print("Starting Tweet Scraper")
-    count = 0
-    ratelimitcheck = True
     global maindict
     PersonInfo = {PersonID : {
         "oldmax_id"    : 0,
@@ -36,15 +34,36 @@ def Setup(PersonID):
         if PersonID in ParserInfo.keys():
             PersonInfo[PersonID]['oldmax_id'] = ParserInfo[PersonID]['oldmax_id']
             PersonInfo[PersonID]['laststop_id'] = ParserInfo[PersonID]['laststop_id']
-    maindict = Loader.TweetFileReader()
-    start = API.user_timeline(id = PersonID, count = 1,tweet_mode='extended')
+    if (ratelimit()):
+        start = API.user_timeline(id = PersonID, count = 1,tweet_mode='extended')
+    else:
+        print("API Limit Reached")
+        quit()
     newmax_id = start[0]._json['id']
     oldmax_id = PersonInfo[PersonID]['oldmax_id']
     laststop = PersonInfo[PersonID]['laststop_id']
     if oldmax_id == 0:
         PersonInfo[PersonID]['oldmax_id'] = newmax_id
+    ParseInfo = dict()
+    ParseInfo["PersonID"] = PersonID
+    ParseInfo["PersonInfo"] = PersonInfo
+    ParseInfo["newmax"] = newmax_id
+    ParseInfo["start"] = start
+    return ParseInfo
+
+def main(ParseInfo):
+    global maindict
+    ratelimitcheck = True
+    PersonID = ParseInfo['PersonID']
+    PersonInfo = ParseInfo["PersonInfo"]
+    newmax_id = ParseInfo["newmax"]
+    oldmax_id = ParseInfo['PersonInfo'][PersonID]['oldmax_id']
+    start = ParseInfo["start"]
+    laststop = PersonInfo[PersonID]["laststop_id"]
+    maindict = Loader.TweetFileReader()
+    count = 0
     while ratelimitcheck and laststop !=0:
-        tweets = API.user_timeline(id=PersonID, count=100, tweet_mode='extended', max_id=newmax_id)
+        tweets = API.user_timeline(id=PersonID, count=20, tweet_mode='extended', max_id=newmax_id)
         if int(tweets[-1]._json['id']) < oldmax_id and int(tweets[0]._json['id']) < oldmax_id:
             PersonInfo[PersonID]['oldmax_id'] = start[0]._json['id']
             print("Successfully added new tweets to main file. Going to last stop")
@@ -61,7 +80,7 @@ def Setup(PersonID):
         if laststop == 0:
             laststop = start[0]._json['id']
         #time.sleep(2)
-        tweets = API.user_timeline(id = PersonID, count = 100,tweet_mode='extended',max_id=laststop)
+        tweets = API.user_timeline(id = PersonID, count = 20,tweet_mode='extended',max_id=laststop)
         if tweets == []:
             print("Reached furthest tweet possible. Currently set at 3200th most recent tweet (this number includes retweets)")
             break;
@@ -88,4 +107,5 @@ def ratelimit():
 
 
 if __name__ == "__main__":
-    Setup(704440164)
+    ParseInfo  = Setup(704440164)
+    main(ParseInfo)
